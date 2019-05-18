@@ -1,0 +1,59 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: bitcoind
+  namespace: ln-testnet
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: bitcoind
+    spec:
+      containers:
+        - name: bitcoind
+          image: kylemanna/bitcoind:<%= current_sha %>
+          command:
+            - "btc_oneshot"
+            - "-testnet"
+            - "-printtoconsole"
+            - "-dbcache=2000"
+            - "-rpcallowip=0.0.0.0/0"
+            - "-txindex=1"
+            - "-zmqpubrawblock=tcp://127.0.0.1:29000"
+            - "-zmqpubrawtx=tcp://127.0.0.1:29000"
+            - "-zmqpubhashtx=tcp://127.0.0.1:29000"
+            - "-zmqpubhashblock=tcp://127.0.0.1:29000"
+          resources:
+            requests:
+              cpu: 0.5
+              memory: 4Gi
+            limits:
+              cpu: 1
+              memory: 6Gi
+          env:
+            - name: RPCUSER
+              valueFrom:
+                secretKeyRef:
+                  name: bitcoind
+                  key: rpcuser
+            - name: RPCPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bitcoind
+                  key: rpcpassword
+          ports:
+            - name: rpc-port
+              containerPort: 18332
+            - name: listen-port
+              containerPort: 18333
+            - name: zmq-port
+              containerPort: 29000
+          volumeMounts:
+            - mountPath: /data
+              name: bitcoind-pd
+      volumes:
+        - name: bitcoind-pd
+          persistentVolumeClaim:
+            claimName: bitcoind

@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bitcoind
+  namespace: ln-testnet
+spec:
+  ports:
+    - port: 18332
+      targetPort: rpc-port
+      name: rpc-port
+    - port: 18333
+      targetPort: listen-port
+      name: listen-port
+    - port: 29000
+      targetPort: zmq-port
+      name: zmq-port
+  selector:
+    app: bitcoind
