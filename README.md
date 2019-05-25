@@ -47,13 +47,58 @@ Encrypt it:
 ejson encrypt config/deploy/testnet/secrets.ejson
 ```
 
+Deploy bitcoind:
+
 ```
 ENVIRONMENT=testnet kubernetes-deploy ln-bitcoind-testnet $CONTEXT
 ```
 
-Once that has synced, which may take up to a few days, deploy lnd:
+Once that has synced, which may take up to a few days, deploy lnd.
+
+# LND
+
+`cd` into the `lnd` directory:
+
+```
+cd ../lnd
+```
+
+Create the namespace:
 
 ```
 kubectl create namespace ln-lnd-testnet
+```
+
+Setup the encryption secrets:
+
+```
+ejson keygen
+kubectl create secret generic ejson-keys --from-literal=public_key_above=private_key_above --namespace=ln-lnd-testnet
+```
+
+Copy the secret encryption file:
+
+```
+cp config/deploy/testnet/secrets.ejson{.sample,}
+```
+
+With a text editor, change the value of `_public_key` of `secrets.ejson` to the public key generated above. Change `rpcpassword` to match the bitcoind password above.
+
+Encrypt it:
+
+```
+ejson encrypt config/deploy/testnet/secrets.ejson
+```
+
+Deploy lnd:
+
+```
 ENVIRONMENT=testnet kubernetes-deploy ln-lnd-testnet $CONTEXT
+```
+
+Create the wallet:
+
+```
+kubectl exec `kubectl get pods -n ln-lnd-testnet -l app=lnd | tail -1 | awk '{print $1}'` -n ln-lnd-testnet -it -- bash
+lncli create # enter your password
 ```

@@ -1,0 +1,57 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: lnd
+  <<: <%= partial "namespace" %>
+  labels:
+    app: lnd
+  annotations:
+    shipit.shopify.io/restart: "true"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: lnd
+    spec:
+      containers:
+        - name: lnd
+          image: thesisrobot/lnd:v0.6.1-beta
+          command:
+            - "lnd"
+            - "--bitcoin.active"
+            - "--bitcoin.testnet"
+            - "--bitcoin.node=bitcoind"
+            - "--bitcoind.rpchost=bitcoind.ln-bitcoind-testnet:18332"
+            - "--bitcoind.rpcuser=$RPCUSER"
+            - "--bitcoind.rpcpass=$RPCPASSWORD"
+            - "--bitcoind.zmqpubrawblock=tcp://bitcoind.ln-bitcoind-testnet:29000"
+            - "--bitcoind.zmqpubrawtx=tcp://bitcoind.ln-bitcoind-testnet:29001"
+          resources:
+            requests:
+              cpu: 0.5
+              memory: 0.5Gi
+            limits:
+              cpu: 1
+              memory: 1Gi
+          env:
+            - name: RPCUSER
+              value: rpcuser
+            - name: RPCPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bitcoind
+                  key: rpcpassword
+          ports:
+            - name: rpc-port
+              containerPort: 10009
+            - name: grpc-port
+              containerPort: 8080
+          volumeMounts:
+            - mountPath: /root/.lnd
+              name: lnd-pd
+      volumes:
+        - name: lnd-pd
+          persistentVolumeClaim:
+            claimName: lnd
