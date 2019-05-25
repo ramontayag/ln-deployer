@@ -3,7 +3,9 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: bitcoind
-  namespace: ln-testnet
+  <<: <%= partial "namespace" %>
+  labels:
+    app: bitcoind
 spec:
   accessModes:
     - ReadWriteOnce

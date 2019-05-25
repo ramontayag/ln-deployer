@@ -3,7 +3,11 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: bitcoind
-  namespace: ln-testnet
+  <<: <%= partial "namespace" %>
+  labels:
+    app: bitcoind
+  annotations:
+    shipit.shopify.io/restart: "true"
 spec:
   replicas: 1
   template:
@@ -13,7 +17,7 @@ spec:
     spec:
       containers:
         - name: bitcoind
-          image: kylemanna/bitcoind:<%= current_sha %>
+          image: kylemanna/bitcoind:latest
           command:
             - "btc_oneshot"
             - "-testnet"
@@ -22,9 +26,7 @@ spec:
             - "-rpcallowip=0.0.0.0/0"
             - "-txindex=1"
             - "-zmqpubrawblock=tcp://127.0.0.1:29000"
-            - "-zmqpubrawtx=tcp://127.0.0.1:29000"
-            - "-zmqpubhashtx=tcp://127.0.0.1:29000"
-            - "-zmqpubhashblock=tcp://127.0.0.1:29000"
+            - "-zmqpubrawtx=tcp://127.0.0.1:29001"
           resources:
             requests:
               cpu: 0.5
@@ -34,10 +36,7 @@ spec:
               memory: 6Gi
           env:
             - name: RPCUSER
-              valueFrom:
-                secretKeyRef:
-                  name: bitcoind
-                  key: rpcuser
+              value: rpcuser
             - name: RPCPASSWORD
               valueFrom:
                 secretKeyRef:
@@ -48,8 +47,10 @@ spec:
               containerPort: 18332
             - name: listen-port
               containerPort: 18333
-            - name: zmq-port
+            - name: zmqblock-port
               containerPort: 29000
+            - name: zmqtx-port
+              containerPort: 29001
           volumeMounts:
             - mountPath: /data
               name: bitcoind-pd
