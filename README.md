@@ -1,4 +1,12 @@
-# Setup
+# LightningNetwork Deployer
+
+Kubernetes deployment files for Bitcoin LightningNetwork. It contains both testnet and mainnet files. These are meant to be used as a guide, and not to be deployed from directly.
+
+## Security
+
+When deploying production, you should be using your own images and not trusting the images that other people have built. This does not cover that.
+
+## Setup
 
 Before you start here, you should be able to talk to your Kubernetes cluster. `kubectl get nodes` should return the nodes you have.
 
@@ -12,7 +20,7 @@ cd ln-deployer
 bundle
 ```
 
-# bitcoind
+## bitcoind
 
 First, `cd` into the bitcoind deployment files:
 
@@ -55,7 +63,7 @@ ENVIRONMENT=testnet kubernetes-deploy ln-bitcoind-testnet $CONTEXT
 
 Once that has synced, which may take up to a few days, deploy lnd.
 
-# LND
+## LND
 
 `cd` into the `lnd` directory:
 
