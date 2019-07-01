@@ -17,7 +17,8 @@ spec:
     spec:
       containers:
         - name: lnd
-          image: thesisrobot/lnd:v0.6.1-beta
+          image: ramontayag/lnd:latest
+          imagePullPolicy: Always
           command:
             - "lnd"
             - "--bitcoin.active"
