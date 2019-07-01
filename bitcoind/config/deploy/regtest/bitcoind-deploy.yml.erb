@@ -21,36 +21,27 @@ spec:
           command:
             - "/entrypoint.sh"
             - "-printtoconsole"
-            - "-testnet"
-            - "-rpcauth=rpcuser:26e6e3aa27c83203ab9d848ad0b2fa88$5f0dd7d87392c47e021307ba3f61dc4fe26e071566b90fa0b686ce5564fc76ea"
-            - "-rpcbind=0.0.0.0:18332"
+            - "-regtest"
+            - "-dbcache=512"
+            - "-rpcauth=rpcuser:3564a5483d7e4b5ddd76bec7b2cefabb$62282139aa851adf1de51ab42e9eb81b10eecd7d78b61940540323f15d16cabf"
+            - "-rpcallowip=0.0.0.0/0"
+            - "-rpcbind=0.0.0.0:18443"
             - "-txindex=1"
             - "-server=1"
-            - "-rpcallowip=0.0.0.0/0"
             - "-zmqpubrawblock=tcp://127.0.0.1:29000"
             - "-zmqpubrawtx=tcp://127.0.0.1:29001"
-            - "-dbcache=512"
-            # When catching up for the first time, use more resources:
-            # - "-dbcache=2000"
           resources:
             requests:
               cpu: 0.5
-              memory: 1Gi
+              memory: 0.5Gi
             limits:
               cpu: 1
-              memory: 1.5Gi
-            # When catching up for the first time, use more resources:
-            # requests:
-            #   cpu: 0.5
-            #   memory: 4Gi
-            # limits:
-            #   cpu: 1
-            #   memory: 6Gi
+              memory: 1Gi
           ports:
             - name: rpc-port
-              containerPort: 18332
+              containerPort: 18443
             - name: listen-port
-              containerPort: 18333
+              containerPort: 18444
             - name: zmqblock-port
               containerPort: 29000
             - name: zmqtx-port

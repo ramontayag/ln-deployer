@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress
+  <<: <%= partial "namespace" %>
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - host: ln-testnet.bloomx.tech
+      http:
+        paths:
+        - path: /
+          backend:
+            serviceName: lnd
+            servicePort: rpc-port
