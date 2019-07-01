@@ -20,15 +20,9 @@ spec:
           image: ramontayag/lnd:latest
           imagePullPolicy: Always
           command:
-            - "lnd"
-            - "--bitcoin.active"
-            - "--bitcoin.testnet"
-            - "--bitcoin.node=bitcoind"
-            - "--bitcoind.rpchost=bitcoind.ln-bitcoind-testnet:18332"
-            - "--bitcoind.rpcuser=$RPCUSER"
-            - "--bitcoind.rpcpass=$RPCPASSWORD"
-            - "--bitcoind.zmqpubrawblock=tcp://bitcoind.ln-bitcoind-testnet:29000"
-            - "--bitcoind.zmqpubrawtx=tcp://bitcoind.ln-bitcoind-testnet:29001"
+            - "/bin/bash"
+            - "-c"
+            - "lnd --bitcoin.active --bitcoin.testnet --bitcoin.node=bitcoind --bitcoind.rpchost=bitcoind.ln-bitcoind-testnet:18332 --bitcoind.rpcuser=$RPCUSER --bitcoind.rpcpass=$RPCPASSWORD --bitcoind.zmqpubrawblock=tcp://bitcoind.ln-bitcoind-testnet:29000 --bitcoind.zmqpubrawtx=tcp://bitcoind.ln-bitcoind-testnet:29001"
           resources:
             requests:
               cpu: 0.5
